@@ -53,4 +53,26 @@ public class Rectangle implements Shape{
            
     }
     
+    
+       @Override
+    public int getX1() {
+        return x1;
+    }
+
+    @Override
+    public int getY1() {
+        return y1;
+    }
+    
+
+    @Override
+    public int getX2() {
+        return x2;
+    }
+
+    @Override
+    public int getY2() {
+        return y2;
+    }
+    
 }

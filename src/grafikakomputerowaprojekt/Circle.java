@@ -47,4 +47,25 @@ public class Circle implements Shape{
         return x<=x2 && x>=x1 && y>y1 && y<y2;
     }
     
+       @Override
+    public int getX1() {
+        return x1;
+    }
+
+    @Override
+    public int getY1() {
+        return y1;
+    }
+    
+
+    @Override
+    public int getX2() {
+        return x2;
+    }
+
+    @Override
+    public int getY2() {
+        return y2;
+    }
+    
 }

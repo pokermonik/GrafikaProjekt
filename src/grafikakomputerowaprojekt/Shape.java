@@ -16,5 +16,9 @@ public interface Shape {
     public abstract void move(int x, int y);
     public abstract void resize(int x,int y);
     public abstract boolean position(int x,int y);
+    public abstract int getX1();
+    public abstract int getY1();
+    public abstract int getX2();
+    public abstract int getY2();
     
 }

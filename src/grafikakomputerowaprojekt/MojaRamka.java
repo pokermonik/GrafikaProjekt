@@ -28,6 +28,7 @@ public class MojaRamka extends JFrame{
     int endY;
     int wybor=-1;
     int click =0;
+    int recznie=1;
     ShapesList shapes = new ShapesList();
     Line currentLine;
     Shape selectedShape;
@@ -36,12 +37,48 @@ public class MojaRamka extends JFrame{
     JButton btnOkrag= new JButton("Okrag");
     JButton btnPrzesun= new JButton("Przesun");
     JButton btnRozmiar= new JButton("Zmien Rozmiar");
+    JLabel coordinatesLabel= new JLabel("X: 0 Y: 0");
+    
+    JCheckBox checkBoxPixele = new JCheckBox("Wpisz recznie");
     DrawCanvas myCanvas;
     
     JPanel controlPanel = new JPanel();
     JPanel canvasPanel = new JPanel();
+    MultipleInputDialog dialog4 =new MultipleInputDialog(1);
+    MultipleInputDialog dialog2 =new MultipleInputDialog(2);
     
-    
+    public void showMyDialog()
+    {
+        
+        int result = dialog4.showInputDialog(controlPanel);
+        if(result==JOptionPane.OK_OPTION)
+        {
+            this.click=1;
+            this.startX=dialog4.getX1();
+            this.startY=dialog4.getY1();
+            this.endX=dialog4.getX2();
+            this.endY=dialog4.getY2();
+            myCanvas.repaint();
+        } 
+    }
+    public void showMyDialog2()
+    {
+        
+        int result = dialog2.showInputDialog(controlPanel);
+        if(result==JOptionPane.OK_OPTION)
+        {
+            if (wybor==3)
+            {
+                selectedShape.move(dialog2.getX1(), dialog2.getY1());
+            }
+            else
+            {
+                selectedShape.resize(dialog2.getX1(), dialog2.getY1());
+            }
+            
+            myCanvas.repaint();
+        } 
+    }
     
     public MojaRamka()
     {
@@ -55,7 +92,10 @@ public class MojaRamka extends JFrame{
         public void actionPerformed(ActionEvent e) {
             //your actions
             wybor=0;
-            
+            if(recznie==-1)
+            {
+                showMyDialog();
+            }
         }
         });
         btnProstokat.addActionListener(new ActionListener() {
@@ -64,6 +104,10 @@ public class MojaRamka extends JFrame{
         public void actionPerformed(ActionEvent e) {
             //your actions
             wybor=1;
+               if(recznie==-1)
+            {
+                showMyDialog();
+            }
         }
         });
           btnOkrag.addActionListener(new ActionListener() {
@@ -72,6 +116,10 @@ public class MojaRamka extends JFrame{
         public void actionPerformed(ActionEvent e) {
             //your actions
             wybor=2;
+               if(recznie==-1)
+            {
+                showMyDialog();
+            }
         }
         });
                btnPrzesun.addActionListener(new ActionListener() {
@@ -83,7 +131,7 @@ public class MojaRamka extends JFrame{
         }
         });
                
-                    btnRozmiar.addActionListener(new ActionListener() {
+        btnRozmiar.addActionListener(new ActionListener() {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -91,11 +139,26 @@ public class MojaRamka extends JFrame{
             wybor=4;
         }
         });
+                    
+        checkBoxPixele.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                recznie=-recznie;
+                System.out.println(recznie);
+            }
+            
+        });
+                
+        controlPanel.add(checkBoxPixele);
         controlPanel.add(btnLinia);
         controlPanel.add(btnProstokat);
         controlPanel.add(btnOkrag);
         controlPanel.add(btnPrzesun);
         controlPanel.add(btnRozmiar);
+        controlPanel.add(coordinatesLabel);
+      
+     
 
         // Add the canvas to the canvas panel
         canvasPanel.setLayout(new BorderLayout());
@@ -107,7 +170,7 @@ public class MojaRamka extends JFrame{
         mainPanel.add(controlPanel, BorderLayout.NORTH);
         mainPanel.add(canvasPanel, BorderLayout.CENTER);
         
-        myCanvas.setPreferredSize(new Dimension(500, 500));
+        myCanvas.setPreferredSize(new Dimension(700, 700));
         setContentPane(mainPanel);
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -127,21 +190,30 @@ public class MojaRamka extends JFrame{
       @Override
       public void paintComponent(Graphics g) {
          super.paintComponent(g);     // paint parent's background
+         Graphics2D g2 = (Graphics2D) g;
          
          setBackground(Color.WHITE);  // set background color for this JPanel
          
          
          // Your custom painting codes. For example,
          // Drawing primitive shapes
+         g2.setStroke(new BasicStroke(7));
          g.setColor(Color.BLACK);    // set the drawing color
+         
        
                 for (int i=0;i<shapes.getLength();i++)
                    {
-                  
+                       /*if(shapes.get(i).position(startX, startY))
+                       {
+                           g.setColor(Color.red);
+                       }*/
                        shapes.get(i).draw(g);
+                       //g.setColor(Color.BLACK);
                        
                        
                    }
+         //g.setColor(Color.red);
+         
          switch(wybor)
          {
               
@@ -192,8 +264,13 @@ public class MojaRamka extends JFrame{
          
          public void mouseDragged(MouseEvent e)
          {
-            System.out.println("Moved");
-            endX=e.getX();
+                if(recznie==-1 && wybor<3)
+                {
+                    
+                }
+                else
+                {
+                       endX=e.getX();
             endY=e.getY();
             if (wybor == 3 && selectedShape != null)
             { // Check if the Przesun button is selected and a shape is selected
@@ -213,31 +290,60 @@ public class MojaRamka extends JFrame{
                 startY = e.getY();
             }
             myCanvas.repaint();
+                }
+            System.out.println("Moved");
+         
             
             
             
          }
+  
          public void mousePressed(MouseEvent e)
          {
-            
-            startX=e.getX();
-            startY=e.getY();
-            click=0;
-            if(wybor==3 || wybor==4)
-            {
-              selectedShape=shapes.getSelectedShape(startX,startY);
-            }
+         
+                if(recznie==-1 && wybor<3)
+                {
+                
+                }
+                else
+                {
+                       startX=e.getX();
+                startY=e.getY();
+                click=0;
+                }
+             
+                if(wybor==3 || wybor==4)
+                {
+                  selectedShape=shapes.getSelectedShape(startX,startY);
+                } 
+                
             System.out.println("Pressed"+"X pocz: "+startX+"Y pocz: "+startY);
            
          }
+         public void mouseMoved(MouseEvent e)
+         {
+                coordinatesLabel.setText("X: "+e.getX()+" Y: "+e.getY());
+             
+         }
          public void mouseReleased(MouseEvent e)
          {
-            
-            endX=e.getX();
-            endY=e.getY();
-            System.out.println("Released"+"X koniec: "+endX+"Y koniec: "+endY);
-            click=1;
-            myCanvas.repaint();
+             
+            if(recznie==1)
+            {
+                endX=e.getX();
+                endY=e.getY();
+                System.out.println("Released"+"X koniec: "+endX+"Y koniec: "+endY);
+                click=1;
+                myCanvas.repaint();
+            }
+            else
+            {
+               if ((wybor == 3 || wybor==4) && selectedShape != null)
+               {
+                   showMyDialog2();
+               }
+            }
+        
             
             
             

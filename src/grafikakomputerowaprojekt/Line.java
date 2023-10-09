@@ -25,6 +25,7 @@ public class Line implements Shape{
     
     @Override
     public void draw(Graphics g) {
+        
         g.drawLine(x1, y1, x2, y2);
         
         
@@ -49,6 +50,27 @@ public class Line implements Shape{
     @Override
     public boolean position(int x, int y) {
         return Line2D.ptSegDist(x1,y1,x2,y2, x, y)<=1;
+    }
+
+    @Override
+    public int getX1() {
+        return x1;
+    }
+
+    @Override
+    public int getY1() {
+        return y1;
+    }
+    
+
+    @Override
+    public int getX2() {
+        return x2;
+    }
+
+    @Override
+    public int getY2() {
+        return y2;
     }
     
 }
