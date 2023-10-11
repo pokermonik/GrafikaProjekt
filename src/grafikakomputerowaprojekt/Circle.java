@@ -35,16 +35,52 @@ public class Circle implements Shape{
 
     @Override
     public void resize(int x,int y) {
-          int radiusChange = (x + y) / 2; // Calculate the average change in dx and dy
-    x1 -= radiusChange;
-    y1 -= radiusChange;
-    x2 += radiusChange;
-    y2 += radiusChange;
+       // Calculate the new values of a and b
+    int a = Math.abs(x2 - x1) / 2; // Current semi-major axis
+    int b = Math.abs(y2 - y1) / 2; // Current semi-minor axis
+
+    // Calculate the new width and height
+    int newWidth = Math.abs(x2 - x1) + x;
+    int newHeight = Math.abs(y2 - y1) + y;
+
+    // Ensure that both the new width and height are greater than 0 to avoid issues
+    if (newWidth > 0 && newHeight > 0) {
+        // Calculate the new values of a and b based on the new width and height
+        a = newWidth / 2;
+        b = newHeight / 2;
+        
+        System.out.println(x1+"  "+x2+"  "+y1+"   "+ y2+"   "+ newWidth+"   "+ newHeight+"  ");
+        if(x2>x1)
+        {
+               x2 = x1 + newWidth;
+        y2 = y1 + newHeight;
+        }
+        else
+        {
+            x1=x2+newWidth;
+            y1=y2+newHeight;
+        }
+     
+    }
+    
     }
 
     @Override
     public boolean position(int x, int y) {
-        return x<=x2 && x>=x1 && y>y1 && y<y2;
+
+int centerX = (x1 + x2) / 2;
+    int centerY = (y1 + y2) / 2;
+    int a = Math.abs(x2 - x1) / 2; // Semi-major axis for the ellipse
+    int b = Math.abs(y2 - y1) / 2; // Semi-minor axis for the ellipse
+
+    double dx = x - centerX;
+    double dy = y - centerY;
+
+    // Calculate the distance from the click point to the closest point on the border
+    double distanceToBorder = (dx * dx) / (a * a) + (dy * dy) / (b * b);
+
+    return distanceToBorder >= 0.9 && distanceToBorder <= 1.1; // Adjust the range as needed
+
     }
     
        @Override

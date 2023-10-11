@@ -13,15 +13,20 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import javax.imageio.ImageIO;
 import static javax.swing.GroupLayout.Alignment.CENTER;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
  * @author poker
  */
 public class MojaRamka extends JFrame{
+    
     int startX;
     int startY;
     int endX;
@@ -32,20 +37,30 @@ public class MojaRamka extends JFrame{
     ShapesList shapes = new ShapesList();
     Line currentLine;
     Shape selectedShape;
+    DrawCanvas myCanvas;
+    
+    JButton btnZapisz = new JButton("Zapisz");
+    JButton btnWczytaj = new JButton("Wczytaj");
     JButton btnLinia= new JButton("Linia");
     JButton btnProstokat= new JButton("Prostokat");
     JButton btnOkrag= new JButton("Okrag");
     JButton btnPrzesun= new JButton("Przesun");
     JButton btnRozmiar= new JButton("Zmien Rozmiar");
+    
     JLabel coordinatesLabel= new JLabel("X: 0 Y: 0");
+    JLabel textDialogAlert = new JLabel("Udało się zapisać obraz");
     
     JCheckBox checkBoxPixele = new JCheckBox("Wpisz recznie");
-    DrawCanvas myCanvas;
     
     JPanel controlPanel = new JPanel();
     JPanel canvasPanel = new JPanel();
+    
     MultipleInputDialog dialog4 =new MultipleInputDialog(1);
     MultipleInputDialog dialog2 =new MultipleInputDialog(2);
+    JDialog dialogAlert = new JDialog(this,"AAA");
+    
+    JFileChooser chooseFile = new JFileChooser();
+    
     
     public void showMyDialog()
     {
@@ -149,14 +164,49 @@ public class MojaRamka extends JFrame{
             }
             
         });
-                
+        
+        btnZapisz.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                myCanvas.saveCanvas();       
+                dialogAlert.setVisible(true);
+               
+            }
+            
+        }
+        );
+        
+        btnWczytaj.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                myCanvas.loadCanvas();
+
+            }
+            
+        });
+        
+        textDialogAlert.setHorizontalAlignment(SwingConstants.CENTER);
+        dialogAlert.add(textDialogAlert);
+        dialogAlert.setSize(200, 100); // Set the size of the dialog
+        dialogAlert.setLocationRelativeTo(MojaRamka.this); // 
+        dialogAlert.setTitle("Udalo sie!");
+        
+        chooseFile.setFileFilter(new FileNameExtensionFilter(".png", "png"));
+
+        
+        
         controlPanel.add(checkBoxPixele);
         controlPanel.add(btnLinia);
         controlPanel.add(btnProstokat);
         controlPanel.add(btnOkrag);
         controlPanel.add(btnPrzesun);
         controlPanel.add(btnRozmiar);
+        controlPanel.add(btnZapisz);
+        controlPanel.add(btnWczytaj); 
         controlPanel.add(coordinatesLabel);
+        
       
      
 
@@ -183,21 +233,29 @@ public class MojaRamka extends JFrame{
       // Override paintComponent to perform your own painting
          
         private BufferedImage buffer;
+        private Image loadedImage;
         public DrawCanvas(MouseAdapter MA) {
            addMouseListener(MA);
            addMouseMotionListener(MA);
        }
+        
+        public void setImage(Image img)
+        {
+            this.loadedImage=img;
+        }
       @Override
       public void paintComponent(Graphics g) {
          super.paintComponent(g);     // paint parent's background
-         Graphics2D g2 = (Graphics2D) g;
+         
          
          setBackground(Color.WHITE);  // set background color for this JPanel
          
-         
+          if (loadedImage != null) {
+        g.drawImage(loadedImage, 0, 0, null);
+    }
          // Your custom painting codes. For example,
          // Drawing primitive shapes
-         g2.setStroke(new BasicStroke(7));
+        
          g.setColor(Color.BLACK);    // set the drawing color
          
        
@@ -256,8 +314,63 @@ public class MojaRamka extends JFrame{
           
    
       }
-   }
-     
+      
+      public void saveCanvas()
+      {
+        int returnValue = chooseFile.showOpenDialog(this);
+        if (returnValue == JFileChooser.APPROVE_OPTION)
+        {
+            File selectedFile = chooseFile.getSelectedFile();
+               if (!selectedFile.getName().toLowerCase().endsWith(".png")) {
+            selectedFile = new File(selectedFile.getAbsolutePath() + ".png");
+        }
+            BufferedImage image = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = image.createGraphics();
+            myCanvas.paint(g2d);  // Draw the content of your canvas onto the image
+            g2d.dispose();  // Release the graphics context
+
+            try 
+            { 
+                ImageIO.write(image, "png",selectedFile);
+            } 
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+      }
+      public void loadCanvas()
+      {       
+        int returnValue = chooseFile.showOpenDialog(this);
+        if (returnValue == JFileChooser.APPROVE_OPTION)
+        {
+            File selectedFile = chooseFile.getSelectedFile();
+            try {
+                
+                BufferedImage image = ImageIO.read(selectedFile);
+                if (image != null) 
+                {
+                    Graphics2D g2d = (Graphics2D) myCanvas.getGraphics();
+                    g2d.drawImage(image, 0,0, this);
+                    myCanvas.setImage(image);
+                    g2d.dispose();
+                    
+                    //myCanvas.repaint();
+                }
+                else
+                {
+                    System.err.println("Loaded image is null.");
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+      }
+      
+      
+     }
+    
      MouseAdapter mouseAdapter = new MouseAdapter()
      {
       
@@ -315,19 +428,15 @@ public class MojaRamka extends JFrame{
                 if(wybor==3 || wybor==4)
                 {
                   selectedShape=shapes.getSelectedShape(startX,startY);
-                } 
-                
+                }         
             System.out.println("Pressed"+"X pocz: "+startX+"Y pocz: "+startY);
-           
          }
          public void mouseMoved(MouseEvent e)
          {
-                coordinatesLabel.setText("X: "+e.getX()+" Y: "+e.getY());
-             
+                coordinatesLabel.setText("X: "+e.getX()+" Y: "+e.getY()); 
          }
          public void mouseReleased(MouseEvent e)
-         {
-             
+         {        
             if(recznie==1)
             {
                 endX=e.getX();
@@ -343,10 +452,6 @@ public class MojaRamka extends JFrame{
                    showMyDialog2();
                }
             }
-        
-            
-            
-            
          }
      };
     

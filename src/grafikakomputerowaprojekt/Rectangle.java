@@ -38,17 +38,23 @@ public class Rectangle implements Shape{
           // Adjust the width and height based on the direction of resizing
     
     
-    int srednia =x+y/2;
-    
-    x1=x1-srednia;
-    x2=x2+srednia;
-    y1=y1-srednia;
-    y2=y2+srednia;
- 
+int newWidth = x2 - x1 + x;
+    int newHeight = y2 - y1 + y;
+
+    if (newWidth >= 0 && newHeight >= 0) {
+        // Ensure both width and height are positive or zero
+        x2 = x1 + newWidth;
+        y2 = y1 + newHeight;
+    } else {
+        // Treat the shape as an arbitrary rectangle by updating x2 and y2
+        x2 = x1 - newWidth;
+        y2 = y1 - newHeight;
+    }
     }
 
     @Override
     public boolean position(int x, int y) {
+        int tolerance=5;
         return ((x==x1 || x==x2) && (y<=y2 && y>=y1)) || ((y==y1 || y==y2) && (x>=x1 && x<=x2));
            
     }
