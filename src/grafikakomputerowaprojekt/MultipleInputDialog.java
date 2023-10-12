@@ -59,12 +59,13 @@ public class MultipleInputDialog extends JPanel{
     }
        
     public int showInputDialog(Component parentComponent) 
-    {
+    {   
+        
         return JOptionPane.showConfirmDialog
         (
         parentComponent,
         this,
-        "Podaj wspolrzedne pixeli",
+        "Podaj współrzędne pixeli",
         JOptionPane.OK_CANCEL_OPTION,
         JOptionPane.PLAIN_MESSAGE
       );

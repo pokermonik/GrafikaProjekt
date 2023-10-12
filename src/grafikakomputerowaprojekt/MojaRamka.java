@@ -39,13 +39,15 @@ public class MojaRamka extends JFrame{
     Shape selectedShape;
     DrawCanvas myCanvas;
     
-    JButton btnZapisz = new JButton("Zapisz");
-    JButton btnWczytaj = new JButton("Wczytaj");
-    JButton btnLinia= new JButton("Linia");
-    JButton btnProstokat= new JButton("Prostokat");
-    JButton btnOkrag= new JButton("Okrag");
-    JButton btnPrzesun= new JButton("Przesun");
-    JButton btnRozmiar= new JButton("Zmien Rozmiar");
+    MyButton btnZapisz = new MyButton("Zapisz");
+    MyButton btnWczytaj = new MyButton("Wczytaj");
+    MyButton btnLinia= new MyButton("Linia");
+    MyButton btnProstokat= new MyButton("Prostokat");
+    MyButton btnOkrag= new MyButton("Okrag");
+    MyButton btnPrzesun= new MyButton("Przesun");
+    MyButton btnRozmiar= new MyButton("Zmien Rozmiar");
+    
+   
     
     JLabel coordinatesLabel= new JLabel("X: 0 Y: 0");
     JLabel textDialogAlert = new JLabel("Udało się zapisać obraz");
@@ -97,9 +99,13 @@ public class MojaRamka extends JFrame{
     
     public MojaRamka()
     {
-        super("Nazwa");
+        super("Paint Beta");
         this.myCanvas = new DrawCanvas(mouseAdapter);
 
+        
+          checkBoxPixele.setForeground(Color.white); // Change the text color
+        checkBoxPixele.setBackground(Color.blue); // Change the background color
+       
         controlPanel.setLayout(new FlowLayout());
         btnLinia.addActionListener(new ActionListener() {
 
@@ -170,7 +176,7 @@ public class MojaRamka extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 myCanvas.saveCanvas();       
-                dialogAlert.setVisible(true);
+                
                
             }
             
@@ -331,7 +337,11 @@ public class MojaRamka extends JFrame{
 
             try 
             { 
-                ImageIO.write(image, "png",selectedFile);
+                if(ImageIO.write(image, "png",selectedFile))
+                {
+                    dialogAlert.setVisible(true);
+                }
+                
             } 
             catch (IOException e)
             {
