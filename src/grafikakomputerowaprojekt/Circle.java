@@ -10,7 +10,7 @@ import java.awt.Graphics;
  *
  * @author poker
  */
-public class Circle implements Shape{
+public class Circle extends Shape {
 
     int x1,y1,x2,y2;
     public Circle(int x1,int y1,int x2,int y2)

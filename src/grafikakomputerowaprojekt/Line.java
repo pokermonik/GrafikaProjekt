@@ -11,7 +11,7 @@ import java.awt.geom.Line2D;
  *
  * @author poker
  */
-public class Line implements Shape{
+public class Line extends Shape{
 
     int x1,x2,y1,y2;
     

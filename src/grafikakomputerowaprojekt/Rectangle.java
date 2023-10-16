@@ -10,7 +10,7 @@ import java.awt.Graphics;
  *
  * @author poker
  */
-public class Rectangle implements Shape{
+public class Rectangle extends Shape{
 
     int x1,y1,x2,y2;
     public Rectangle(int x1,int y1,int x2,int y2)
@@ -34,22 +34,22 @@ public class Rectangle implements Shape{
     }
 
     @Override
-    public void resize(int x, int y) {
+    public void resize(int x, int y) 
+    {
           // Adjust the width and height based on the direction of resizing
-    
-    
-int newWidth = x2 - x1 + x;
-    int newHeight = y2 - y1 + y;
+        int newWidth = x2 - x1 + x;
+        int newHeight = y2 - y1 + y;
 
-    if (newWidth >= 0 && newHeight >= 0) {
-        // Ensure both width and height are positive or zero
-        x2 = x1 + newWidth;
-        y2 = y1 + newHeight;
-    } else {
-        // Treat the shape as an arbitrary rectangle by updating x2 and y2
-        x2 = x1 - newWidth;
-        y2 = y1 - newHeight;
-    }
+        if (newWidth > 0 && newHeight > 0) 
+        {
+            // Ensure both width and height are positive or zero
+            x2 = x1 + newWidth;
+            y2 = y1 + newHeight;
+            
+        } 
+     
+        
+        System.out.println("x1: "+ x1+" x2: "+x2+" y1: "+y1+" y2: " + y2+" x: "+x+" y: "+y+"   "+ newWidth+"   "+newHeight);
     }
 
     @Override

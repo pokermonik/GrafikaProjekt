@@ -5,12 +5,13 @@
 package grafikakomputerowaprojekt;
 
 import java.awt.Graphics;
+import java.io.Serializable;
 
 /**
  *
  * @author poker
  */
-public interface Shape {
+public abstract class Shape implements Serializable {
     
     public abstract void draw(Graphics g);
     public abstract void move(int x, int y);

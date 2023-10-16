@@ -4,16 +4,24 @@
  */
 package grafikakomputerowaprojekt;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 /**
  *
  * @author poker
  */
-public class ShapesList {
+public class ShapesList implements Serializable {
     
     LinkedList<Shape> shapes = new LinkedList<>();
     
+    public void removeAll()
+    {
+ 
+             shapes.clear();
+        
+        
+    }
     public int getLength()
     {
         return shapes.size();

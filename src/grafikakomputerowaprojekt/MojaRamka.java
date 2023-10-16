@@ -14,9 +14,16 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import static javax.swing.GroupLayout.Alignment.CENTER;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -175,7 +182,11 @@ public class MojaRamka extends JFrame{
         {
             @Override
             public void actionPerformed(ActionEvent e) {
-                myCanvas.saveCanvas();       
+                try {       
+                    myCanvas.saveCanvas();
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(MojaRamka.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 
                
             }
@@ -226,7 +237,7 @@ public class MojaRamka extends JFrame{
         mainPanel.add(controlPanel, BorderLayout.NORTH);
         mainPanel.add(canvasPanel, BorderLayout.CENTER);
         
-        myCanvas.setPreferredSize(new Dimension(700, 700));
+        myCanvas.setPreferredSize(new Dimension(750, 750));
         setContentPane(mainPanel);
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -244,10 +255,14 @@ public class MojaRamka extends JFrame{
            addMouseListener(MA);
            addMouseMotionListener(MA);
        }
-        
+       
         public void setImage(Image img)
         {
             this.loadedImage=img;
+        }
+        public void clearCanvas(Graphics g)
+        {
+            super.paintComponent(g); 
         }
       @Override
       public void paintComponent(Graphics g) {
@@ -321,61 +336,49 @@ public class MojaRamka extends JFrame{
    
       }
       
-      public void saveCanvas()
+      public void saveCanvas() throws FileNotFoundException
       {
         int returnValue = chooseFile.showOpenDialog(this);
         if (returnValue == JFileChooser.APPROVE_OPTION)
         {
             File selectedFile = chooseFile.getSelectedFile();
                if (!selectedFile.getName().toLowerCase().endsWith(".png")) {
-            selectedFile = new File(selectedFile.getAbsolutePath() + ".png");
+            selectedFile = new File(selectedFile.getAbsolutePath()+".png");
         }
-            BufferedImage image = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
-            Graphics2D g2d = image.createGraphics();
-            myCanvas.paint(g2d);  // Draw the content of your canvas onto the image
-            g2d.dispose();  // Release the graphics context
 
-            try 
-            { 
-                if(ImageIO.write(image, "png",selectedFile))
-                {
-                    dialogAlert.setVisible(true);
-                }
-                
-            } 
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+        try (FileOutputStream fileOut = new FileOutputStream(selectedFile);
+             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
+
+            objectOut.writeObject(shapes); // Serialize and write the shapes
+            dialogAlert.setVisible(true);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         }
       }
       public void loadCanvas()
       {       
-        int returnValue = chooseFile.showOpenDialog(this);
-        if (returnValue == JFileChooser.APPROVE_OPTION)
-        {
-            File selectedFile = chooseFile.getSelectedFile();
-            try {
-                
-                BufferedImage image = ImageIO.read(selectedFile);
-                if (image != null) 
-                {
-                    Graphics2D g2d = (Graphics2D) myCanvas.getGraphics();
-                    g2d.drawImage(image, 0,0, this);
-                    myCanvas.setImage(image);
-                    g2d.dispose();
-                    
-                    //myCanvas.repaint();
-                }
-                else
-                {
-                    System.err.println("Loaded image is null.");
-                }
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
+   int returnValue = chooseFile.showOpenDialog(this);
+    if (returnValue == JFileChooser.APPROVE_OPTION) {
+        
+        File selectedFile = chooseFile.getSelectedFile();
+         // Remove the file extension filter
+        shapes.removeAll();
+        try (FileInputStream fileIn = new FileInputStream(selectedFile);
+             ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
+            shapes.removeAll();
+            wybor=-1;
+            selectedShape=null;
+            shapes = (ShapesList) objectIn.readObject(); // Deserialize and read the shapes
+
+            
+            myCanvas.repaint();
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
+    }
       }
       
       
