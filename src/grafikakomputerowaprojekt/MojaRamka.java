@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import static javax.swing.GroupLayout.Alignment.CENTER;
+import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -54,7 +55,7 @@ public class MojaRamka extends JFrame{
     MyButton btnPrzesun= new MyButton("Przesun");
     MyButton btnRozmiar= new MyButton("Zmien Rozmiar");
     
-   
+  
     
     JLabel coordinatesLabel= new JLabel("X: 0 Y: 0");
     JLabel textDialogAlert = new JLabel("Udało się zapisać obraz");
@@ -114,6 +115,8 @@ public class MojaRamka extends JFrame{
         checkBoxPixele.setBackground(Color.blue); // Change the background color
        
         controlPanel.setLayout(new FlowLayout());
+        controlPanel.setBorder(new LineBorder(Color.BLACK, 1));
+        controlPanel.setBackground(Color.white);
         btnLinia.addActionListener(new ActionListener() {
 
         @Override
@@ -122,7 +125,7 @@ public class MojaRamka extends JFrame{
             wybor=0;
             if(recznie==-1)
             {
-                showMyDialog();
+                
             }
         }
         });
@@ -243,8 +246,9 @@ public class MojaRamka extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack(); // Pack the frame to fit components
         setLocationRelativeTo(null); // Center the frame
-        setVisible(true);
+        
     }
+ 
     
      private class DrawCanvas extends JPanel {
       // Override paintComponent to perform your own painting
@@ -359,10 +363,12 @@ public class MojaRamka extends JFrame{
       }
       public void loadCanvas()
       {       
+          
    int returnValue = chooseFile.showOpenDialog(this);
     if (returnValue == JFileChooser.APPROVE_OPTION) {
         
         File selectedFile = chooseFile.getSelectedFile();
+        
          // Remove the file extension filter
         shapes.removeAll();
         try (FileInputStream fileIn = new FileInputStream(selectedFile);
