@@ -20,6 +20,8 @@ public class GrafikaKomputerowaProjekt {
             //PPMreader ppm = new PPMreader();
             MenuJFrame menu = new MenuJFrame();
             menu.setVisible(true);
+            
+           // ColorConverterFrame cccframe = new ColorConverterFrame();
             //ppm.displayImage(ppm.readP3("ppm2.ppm"));
             //JPGreader jpg= new JPGreader("website.jpg");
             //jpg.displayImage(jpg.getImage());

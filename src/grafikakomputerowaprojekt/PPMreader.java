@@ -42,7 +42,6 @@ public class PPMreader {
             is.read(header);
 
             String format = new String(header, "UTF-8");
-            System.out.println(format);
 
             // Read comments and ignore them
             while (true) 
@@ -73,7 +72,6 @@ public class PPMreader {
             int height= readNextInt(is);
             int maxVal = readNextInt(is);
           
-            System.out.println(width+" "+height+" "+maxVal);
             int changeVal = 255/maxVal;
             int r, g, b,r1,g1,b1,pixelValue;
             image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -160,7 +158,7 @@ public class PPMreader {
                 comment=false;
                 
             }
-             System.out.println(c+" "+ comment);
+             //System.out.println(c+" "+ comment);
         
             if (Character.isDigit(c) &comment==false) 
             {
