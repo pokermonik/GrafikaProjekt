@@ -49,6 +49,7 @@ public class ImageDisplay {
     JOptionPane dialogCompression = new JOptionPane();
     JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);
     JFileChooser chooseFile = new JFileChooser();
+    ImageModifier imageModifier = new ImageModifier();
     ZoomImagePanel imagePanel;
     JDialog dialogAlert = new JDialog();
     JFrame frame = new JFrame();
@@ -56,7 +57,7 @@ public class ImageDisplay {
     JLabel label = new JLabel("R:0 G:0 B:0");
     public ImageDisplay()
     {
-        
+       
     }
     public ImageDisplay(BufferedImage img) {
          jpegParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
@@ -94,7 +95,7 @@ public class ImageDisplay {
         });
                 
         // Create a JSlider for zooming
-        zoomSlider = new JSlider(JSlider.HORIZONTAL, 1, 30000*(1/(img.getHeight()*img.getHeight())), 1); // Change the min, max, and initial values as needed
+        zoomSlider = new JSlider(JSlider.HORIZONTAL, 1, 30000*(1/(img.getHeight()*img.getHeight())), 100); // Change the min, max, and initial values as needed
        
 
         // Add a change listener to the slider
@@ -126,9 +127,19 @@ public class ImageDisplay {
         dialogAlert.setSize(200, 100); // Set the size of the dialog 
         dialogAlert.setTitle("BLAD WYBORU");
         dialogAlert.setLocationRelativeTo(frame);
-           MyButton button = new MyButton("Wczytaj JPG/PPM");
-           MyButton button2 = new MyButton("Zapisz jako JPG");
-           
+        MyButton button = new MyButton("Wczytaj JPG/PPM");
+        MyButton button2 = new MyButton("Zapisz jako JPG");
+        MyButton button3 = new MyButton("Skala szarosci");
+        MyButton button4 = new MyButton("Zmien jasnosc");
+        MyButton button5 = new MyButton("Dodawanie");
+        MyButton button6 = new MyButton("Odejmowanie");
+        MyButton button7 = new MyButton("Mnozenie");
+        MyButton button8 = new MyButton("Dzielenie");
+        MyButton button9 = new MyButton("Medianowy");
+        MyButton button10 = new MyButton("Usredniajacy");
+        MyButton button11 = new MyButton("Detekcja krawedzi");
+        MyButton button12 = new MyButton("Gorny");
+        MyButton button13 = new MyButton("Gauss");
    
            button.addActionListener(new ActionListener() {
 
@@ -136,7 +147,7 @@ public class ImageDisplay {
         public void actionPerformed(ActionEvent e) {
             try {
                 //your actions
-                loadJPG();
+                loadJPG(0);
             } catch (IOException ex) {
                 Logger.getLogger(ImageDisplay.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -154,11 +165,166 @@ public class ImageDisplay {
             }
         }
         });
+        button3.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //your actions
+           changeImage(imageModifier.convertToGrayScale(imagePanel.getImage()));
+            
+        }
+        });
+        button4.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //your actions
+            changeBrigtness();
+           
+            
+        }
+        });
+        button5.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                //your actions
+                loadJPG(1);
+            } catch (IOException ex) {
+                Logger.getLogger(ImageDisplay.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           
+            
+        }
+        });
+           button6.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                //your actions
+                loadJPG(2);
+            } catch (IOException ex) {
+                Logger.getLogger(ImageDisplay.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           
+            
+        }
+        });
+        button7.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                //your actions
+                loadJPG(3);
+            } catch (IOException ex) {
+                Logger.getLogger(ImageDisplay.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           
+            
+        }
+        });
+        button8.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                //your actions
+                loadJPG(4);
+            } catch (IOException ex) {
+                Logger.getLogger(ImageDisplay.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           
+            
+        }
+        });
+        button9.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+                //your actions
+                changeImage(imageModifier.medianFilter(imagePanel.getImage()));
+           
+           
+            
+        }
+        });
+        button10.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+                //your actions
+                changeImage(imageModifier.averageFilter(imagePanel.getImage()));
+           
+           
+            
+        }
+        });
+           button11.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+                //your actions
+                changeImage(imageModifier.sobelFilter(imagePanel.getImage()));
+           
+           
+            
+        }
+        });
+        button12.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+                //your actions
+                changeImage(imageModifier.highPassSharpening(imagePanel.getImage()));
+           
+           
+            
+        }
+        });
+        button13.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) 
+        {
+            
+                //your actions
+                changeImage(imageModifier.gaussianBlur(imagePanel.getImage()));
+           
+           
+            
+        }
+        });
+        
+        
+        
+        
+        
+        
+        
+           
            
         JPanel controlPanel = new JPanel();
         controlPanel.add(label);
         controlPanel.add(button);
         controlPanel.add(button2);
+        controlPanel.add(button3);
+        controlPanel.add(button4);
+        controlPanel.add(button5);
+        controlPanel.add(button6);
+        controlPanel.add(button7);
+        controlPanel.add(button8);
+        controlPanel.add(button9);
+        controlPanel.add(button10);
+        controlPanel.add(button11);
+        controlPanel.add(button12);
+        controlPanel.add(button13);
         controlPanel.setBorder(new LineBorder(Color.BLACK, 1));
         controlPanel.setBackground(Color.white);
         // Add the image panel to the frame's center
@@ -175,7 +341,7 @@ public class ImageDisplay {
         
     }
        
-       public void loadJPG() throws IOException
+       public void loadJPG(int mode) throws IOException
         {       
             int returnValue = chooseFile.showOpenDialog(label);
             
@@ -186,7 +352,14 @@ public class ImageDisplay {
                 if(selectedFile.getName().contains("jpg"))
                 {
                     JPGreader jpg= new JPGreader(selectedFile);
-                    changeImage(jpg.getImage());
+                    switch (mode) {
+                        case 1 -> changeImage(imageModifier.addition(imagePanel.getImage(), jpg.getImage() ));
+                        case 2 -> changeImage(imageModifier.substraction(imagePanel.getImage(), jpg.getImage() ));
+                        case 3 -> changeImage(imageModifier.multiplication(imagePanel.getImage(), jpg.getImage() ));
+                        case 4 -> changeImage(imageModifier.division(imagePanel.getImage(), jpg.getImage() ));
+                        default -> changeImage(jpg.getImage());
+                    }
+                    
                 }
                 else if(selectedFile.getName().contains("ppm"))
                 {
@@ -208,6 +381,34 @@ public class ImageDisplay {
            {
                imagePanel.setImage(image);
            }
+    
+   public void changeBrigtness()
+   {
+       Float showInputDialogF;
+        while(true)
+        {
+           
+            String showInputDialog = JOptionPane.showInputDialog(frame,"Prosze podaj stopien zmiany jasnosci, 0.1 do 1, gdzie 2 oznacza najjasniej, a 0.1 najciemniej");
+            try{showInputDialogF = Float.parseFloat(showInputDialog);
+            if(0.1<=showInputDialogF && showInputDialogF<=2 )
+            {
+                changeImage(imageModifier.changeBrightness(imagePanel.getImage(),showInputDialogF));
+                break;
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(imagePanel, "Zly parametr!");
+            }
+            }
+            catch(NumberFormatException e)
+            {
+                JOptionPane.showMessageDialog(imagePanel, "Zly parametr!");
+            }
+            
+        }
+        
+   }
+   
    public void saveToJPG() throws IOException 
    {
     Float showInputDialogF;
