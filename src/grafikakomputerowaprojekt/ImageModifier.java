@@ -15,8 +15,9 @@ import java.util.LinkedList;
 public class ImageModifier {
     
     
-    public BufferedImage convertToGrayScale(BufferedImage image)
+    public BufferedImage convertToGrayScale(BufferedImage image,int mode)
     {
+        int avg=0;
         BufferedImage grayScaleImage =new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_BYTE_GRAY);
         for(int i=0;i<image.getHeight();i++)
         {
@@ -26,7 +27,17 @@ public class ImageModifier {
                 int r = (pixel >> 16) & 0xFF;
                 int g = (pixel >> 8) & 0xFF;
                 int b = pixel & 0xFF;
-                int avg = (r + g + b) / 3;
+                
+                if(mode==1)
+                {
+                    avg = (r + g + b) / 3;
+                }
+                
+                if(mode==2)
+                {
+                    avg=(int) (0.216*r + 0.7153*g + 0.0722*b);
+                }
+                
 
                 int grayPixel = (avg << 16) | (avg << 8) | avg;
                     
@@ -231,9 +242,9 @@ public class ImageModifier {
         LinkedList<Integer> pixelList = new LinkedList();
         
         
-        for (int i=-1;i<=1;i++)
+        for (int i=-1;i<=6;i++)
         {
-            for(int j=-1;j<=1;j++)
+            for(int j=-1;j<=6;j++)
             {
                 if(x+i<image.getWidth() && y+j<image.getHeight() && x+i>=0 && y+j>=0)
                 {

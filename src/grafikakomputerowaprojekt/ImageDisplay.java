@@ -170,7 +170,7 @@ public class ImageDisplay {
         @Override
         public void actionPerformed(ActionEvent e) {
             //your actions
-           changeImage(imageModifier.convertToGrayScale(imagePanel.getImage()));
+            grayScale();
             
         }
         });
@@ -385,10 +385,11 @@ public class ImageDisplay {
    public void changeBrigtness()
    {
        Float showInputDialogF;
-        while(true)
-        {
+       while(true)
+       {
+
+            String showInputDialog = JOptionPane.showInputDialog(frame,"Prosze podaj stopien zmiany jasnosci, 0.1 do 2, gdzie 2 oznacza najjasniej, a 0.1 najciemniej");
            
-            String showInputDialog = JOptionPane.showInputDialog(frame,"Prosze podaj stopien zmiany jasnosci, 0.1 do 1, gdzie 2 oznacza najjasniej, a 0.1 najciemniej");
             try{showInputDialogF = Float.parseFloat(showInputDialog);
             if(0.1<=showInputDialogF && showInputDialogF<=2 )
             {
@@ -404,8 +405,39 @@ public class ImageDisplay {
             {
                 JOptionPane.showMessageDialog(imagePanel, "Zly parametr!");
             }
+
+       }
+        
+   }
+      public void grayScale()
+   {
+       int showInputDialogF;
+       while(true)
+       {
+
+            String showInputDialog = JOptionPane.showInputDialog(frame,"Ktora metoda zmiany szarosci? 1-srednia 2-wzor");
+            if(showInputDialog==null)
+            {
+                break;
+            }
+            try{showInputDialogF = Integer.parseInt(showInputDialog);
             
-        }
+            if(showInputDialogF==2 || showInputDialogF==1 )
+            {
+                changeImage(imageModifier.convertToGrayScale(imagePanel.getImage(),showInputDialogF));
+                break;
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(imagePanel, "Zly parametr!");
+            }
+            }
+            catch(NumberFormatException e)
+            {
+                JOptionPane.showMessageDialog(imagePanel, "Zly parametr!");
+            }
+
+       }
         
    }
    
