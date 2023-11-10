@@ -6,6 +6,7 @@ package grafikakomputerowaprojekt;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -44,7 +45,7 @@ import javax.swing.event.ChangeListener;
  *
  * @author poker
  */
-public class ImageDisplay {
+public class ImageDisplay extends JFrame{
     ImageIcon img;
     JOptionPane dialogCompression = new JOptionPane();
     JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);
@@ -54,6 +55,9 @@ public class ImageDisplay {
     JDialog dialogAlert = new JDialog();
     JFrame frame = new JFrame();
     JSlider zoomSlider; 
+    JFrame histogramFrame ;
+    
+    HistogramChart histogram =new HistogramChart();
     JLabel label = new JLabel("R:0 G:0 B:0");
     public ImageDisplay()
     {
@@ -109,16 +113,7 @@ public class ImageDisplay {
             }
         });
         
-      
-    }
-
-  
-
-      public void setZoomLevel(double zoomLevel) {
-        imagePanel.setZoomLevel(zoomLevel);
-    }
-       public void setVisible(boolean b) {
-           
+          
     
            frame.setLayout(new BorderLayout());
             JLabel textDialogAlert = new JLabel("NIEOBSLUGIWANY TYP PLIKU");
@@ -140,7 +135,9 @@ public class ImageDisplay {
         MyButton button11 = new MyButton("Detekcja krawedzi");
         MyButton button12 = new MyButton("Gorny");
         MyButton button13 = new MyButton("Gauss");
-   
+        MyButton button14 = new MyButton("Histogram");
+        MyButton button15 = new MyButton("Binaryzacja");
+        MyButton button16 = new MyButton("Selekcja czarnego");
            button.addActionListener(new ActionListener() {
 
         @Override
@@ -301,6 +298,49 @@ public class ImageDisplay {
             
         }
         });
+        button14.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) 
+        {
+            
+                //your actions
+                normalization();
+                
+                
+           
+            
+        }
+        });
+           button15.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) 
+        {
+            
+                //your actions
+                binarization();
+                
+                
+           
+            
+        }
+        });
+        button16.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) 
+        {
+            
+                //your actions
+                selectDarkest();
+                
+                
+           
+            
+        }
+        });
+        
         
         
         
@@ -309,35 +349,66 @@ public class ImageDisplay {
         
         
            
-           
-        JPanel controlPanel = new JPanel();
-        controlPanel.add(label);
-        controlPanel.add(button);
-        controlPanel.add(button2);
-        controlPanel.add(button3);
-        controlPanel.add(button4);
-        controlPanel.add(button5);
-        controlPanel.add(button6);
-        controlPanel.add(button7);
-        controlPanel.add(button8);
-        controlPanel.add(button9);
-        controlPanel.add(button10);
-        controlPanel.add(button11);
-        controlPanel.add(button12);
-        controlPanel.add(button13);
-        controlPanel.setBorder(new LineBorder(Color.BLACK, 1));
-        controlPanel.setBackground(Color.white);
+               JPanel controlPanel1 = new JPanel();
+    controlPanel1.add(label);
+    controlPanel1.add(button);
+    controlPanel1.add(button2);
+    controlPanel1.add(button3);
+    controlPanel1.add(button4);
+    controlPanel1.add(button5);
+    controlPanel1.add(button6);
+    controlPanel1.add(button7);
+    controlPanel1.add(button8);
+
+    JPanel controlPanel2 = new JPanel();
+    controlPanel2.add(button9);
+    controlPanel2.add(button10);
+    controlPanel2.add(button11);
+    controlPanel2.add(button12);
+    controlPanel2.add(button13);
+    controlPanel2.add(button14);
+    controlPanel2.add(button15);
+    controlPanel2.add(button16);
+
+    // Create a new panel for arranging the control panels vertically
+    JPanel mainControlPanel = new JPanel(new BorderLayout());
+    mainControlPanel.add(controlPanel1, BorderLayout.NORTH);
+    mainControlPanel.add(controlPanel2, BorderLayout.SOUTH);
+
+    // Add the main control panel to the frame
+    frame.add(mainControlPanel, BorderLayout.NORTH);
+
+        mainControlPanel.setBorder(new LineBorder(Color.BLACK, 1));
+        mainControlPanel.setBackground(Color.white);
         // Add the image panel to the frame's center
         frame.add(imagePanel, BorderLayout.CENTER);
 
         // Add the zoom slider to the frame's south
         frame.add(zoomSlider, BorderLayout.SOUTH);
+       histogramFrame = new JFrame("Histogram");
+       histogramFrame.add(histogram);
+
+        histogramFrame.setSize(800, 600);
+        histogramFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close this frame without affecting the main frame
+
+        //histogramFrame.setVisible(true);
+        //histogram.setPreferredSize(new Dimension(150, 300));
+        //frame.add(histogram,BorderLayout.CENTER);
         
-        frame.add(controlPanel,BorderLayout.NORTH);
         frame.setSize(800, 600);
 
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+         frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
+
+  
+
+      public void setZoomLevel(double zoomLevel) {
+        imagePanel.setZoomLevel(zoomLevel);
+    }
+       public void setVisible(boolean b) {
+       frame.setVisible(b);
         
     }
        
@@ -377,18 +448,28 @@ public class ImageDisplay {
             setZoomLevel(1);
         }
   
-           public void changeImage(BufferedImage image)
-           {
-               imagePanel.setImage(image);
-           }
-    
+    public void changeImage(BufferedImage image)
+    {
+        imagePanel.setImage(image);
+        histogram.setData(imageModifier.createHistogram(imagePanel.getImage()));
+        if(histogramFrame.isVisible()==false)
+        {
+            histogramFrame.setVisible(true);
+        }
+        
+    }
+
+   public void createHistogram(BufferedImage image)
+   {
+       
+   }
    public void changeBrigtness()
    {
        Float showInputDialogF;
        while(true)
        {
 
-            String showInputDialog = JOptionPane.showInputDialog(frame,"Prosze podaj stopien zmiany jasnosci, 0.1 do 2, gdzie 2 oznacza najjasniej, a 0.1 najciemniej");
+            String showInputDialog = JOptionPane.showInputDialog(frame,"Prosze podaj stopien zmiany jasnosci: \n 0.1 do 2, gdzie 2 oznacza najjaśniej, a 0.1 najciemniej");
            
             try{showInputDialogF = Float.parseFloat(showInputDialog);
             if(0.1<=showInputDialogF && showInputDialogF<=2 )
@@ -415,7 +496,7 @@ public class ImageDisplay {
        while(true)
        {
 
-            String showInputDialog = JOptionPane.showInputDialog(frame,"Ktora metoda zmiany szarosci? 1-srednia 2-wzor");
+            String showInputDialog = JOptionPane.showInputDialog(frame,"Ktora metoda zmiany szarosci? \n 1 - srednia \n 2 - wzor");
             if(showInputDialog==null)
             {
                 break;
@@ -440,6 +521,100 @@ public class ImageDisplay {
        }
         
    }
+         public void normalization()
+   {
+       int showInputDialogF;
+       while(true)
+       {
+
+            String showInputDialog = JOptionPane.showInputDialog(frame,"Która metoda normalizacji obrazu? \n 1 - rozszerzenie histogramu \n 2 - wyrównanie histogramu");
+            if(showInputDialog==null)
+            {
+                break;
+            }
+            try{showInputDialogF = Integer.parseInt(showInputDialog);
+            
+            if(showInputDialogF==2 || showInputDialogF==1 )
+            {
+                changeImage(imageModifier.normalizeImage(imagePanel.getImage(),showInputDialogF));
+                break;
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(imagePanel, "Zly parametr!");
+            }
+            }
+            catch(NumberFormatException e)
+            {
+                JOptionPane.showMessageDialog(imagePanel, "Zly parametr!");
+            }
+
+       }
+        
+   }
+    public void binarization()
+   {
+       int showInputDialogF;
+       while(true)
+       {
+
+            String showInputDialog = JOptionPane.showInputDialog(frame,"Podaj próg binaryzacji \n od 0 do 255");
+            if(showInputDialog==null)
+            {
+                break;
+            }
+            try{showInputDialogF = Integer.parseInt(showInputDialog);
+            
+            if(showInputDialogF>=0 && showInputDialogF<=255 )
+            {
+                changeImage(imageModifier.binarization(imagePanel.getImage(),showInputDialogF));
+                break;
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(imagePanel, "Zly parametr!");
+            }
+            }
+            catch(NumberFormatException e)
+            {
+                JOptionPane.showMessageDialog(imagePanel, "Zly parametr!");
+            }
+
+       }
+        
+   }
+      public void selectDarkest()
+   {
+       int showInputDialogF;
+       while(true)
+       {
+
+            String showInputDialog = JOptionPane.showInputDialog(frame,"Podaj procent wyboru czarnego \n od 0 do 100");
+            if(showInputDialog==null)
+            {
+                break;
+            }
+            try{showInputDialogF = Integer.parseInt(showInputDialog);
+            
+            if(showInputDialogF>=0 && showInputDialogF<=255 )
+            {
+                changeImage(imageModifier.selectDarkest(imagePanel.getImage(),showInputDialogF));
+                break;
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(imagePanel, "Zly parametr!");
+            }
+            }
+            catch(NumberFormatException e)
+            {
+                JOptionPane.showMessageDialog(imagePanel, "Zly parametr!");
+            }
+
+       }
+        
+   }
+    
    
    public void saveToJPG() throws IOException 
    {

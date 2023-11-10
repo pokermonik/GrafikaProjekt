@@ -5,8 +5,11 @@
 package grafikakomputerowaprojekt;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
+import org.apache.commons.math3.distribution.NormalDistribution;
 
 /**
  *
@@ -14,7 +17,7 @@ import java.util.LinkedList;
  */
 public class ImageModifier {
     
-    
+    private int[] histogram = new int[256];
     public BufferedImage convertToGrayScale(BufferedImage image,int mode)
     {
         int avg=0;
@@ -242,9 +245,9 @@ public class ImageModifier {
         LinkedList<Integer> pixelList = new LinkedList();
         
         
-        for (int i=-1;i<=6;i++)
+        for (int i=-1;i<=4;i++)
         {
-            for(int j=-1;j<=6;j++)
+            for(int j=-1;j<=4;j++)
             {
                 if(x+i<image.getWidth() && y+j<image.getHeight() && x+i>=0 && y+j>=0)
                 {
@@ -328,6 +331,27 @@ public class ImageModifier {
 
     return alteredImage;
 }
+   public int[] createHistogram(BufferedImage image)
+   {
+       histogram = new int[256];
+       for (int y = 0; y < image.getHeight(); y++) 
+       {
+            for (int x = 0; x < image.getWidth(); x++) 
+            {
+                int pixel=image.getRGB(x, y);
+                int r = (pixel >> 16) & 0xFF;
+                int g = (pixel >> 8) & 0xFF;
+                int b = pixel & 0xFF;   
+                int avg=(int) (0.216*r + 0.7153*g + 0.0722*b);
+                
+                //avg = Math.min(255, Math.max(0, avg));
+                histogram[avg]++;
+
+            }
+       }
+       this.histogram=histogram;
+       return histogram;
+   }
    
    public BufferedImage highPassSharpening(BufferedImage image) {
     BufferedImage alteredImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -362,6 +386,173 @@ public class ImageModifier {
 
     return alteredImage;
 }
+   public BufferedImage normalizeImage(BufferedImage image,int mode)
+   {
+        BufferedImage alteredImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+        int min=255;
+        int max=0;
+        int width=image.getWidth();
+        int height = image.getHeight();
+    
+        
+
+        
+        for(int i=0;i<image.getHeight();i++)
+            {
+                for(int j=0;j<image.getWidth();j++)
+                   {
+                       int pixel=image.getRGB(j, i);
+            
+                       if(pixel<min)
+                       {
+                           min=pixel;
+                       }
+                       else if(pixel>max)
+                       {
+                           max=pixel;
+                       }
+                   }
+               }
+        
+  
+             int cdf=0;
+        int[] equalizedHistogram = new int[256];
+          for (int i = 0; i < 256; i++) {
+        cdf += histogram[i];
+        equalizedHistogram[i] = (int) (255.0 * cdf / (height*width));
+    }
+        
+        for(int i=0;i<image.getHeight();i++)
+            {
+                for(int j=0;j<image.getWidth();j++)
+                   {
+                       int pixel=image.getRGB(j, i);
+                       int alteredPixel=pixel;
+                       int r = (pixel >> 16) & 0xFF;
+                       int g = (pixel >> 8) & 0xFF;
+                       int b = pixel & 0xFF;   
+                       int avg=(int) (0.216*r + 0.7153*g + 0.0722*b);
+                       
+                       if(max==min)
+                       {
+                           alteredPixel=pixel;
+                       }
+                       else
+                       {
+                            if(mode==1)
+                            {
+                                
+                                alteredPixel=(int) ((255.0/(max-min))*(pixel-min));
+                            }
+                            else if(mode==2)
+                            {
+                                alteredPixel = equalizedHistogram[avg];
+                            
+                            }
+                            
+                            
+                       }
+                      
+
+                                   alteredImage.setRGB(j, i, (alteredPixel << 16) | (alteredPixel << 8) | alteredPixel); 
+                   }
+               }
+        return alteredImage;
+   }
+ 
+
+   public BufferedImage binarization(BufferedImage image,int level)
+   {   
+       BufferedImage alteredImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+        for(int i=0;i<image.getHeight();i++)
+            {
+                for(int j=0;j<image.getWidth();j++)
+                   {
+                       int pixel=image.getRGB(j, i);
+                       int r = (pixel >> 16) & 0xFF;
+                       int g = (pixel >> 8) & 0xFF;
+                       int b = pixel & 0xFF;   
+                       int avg=(int) (0.216*r + 0.7153*g + 0.0722*b);
+                       if(avg<level)
+                       {
+                           avg=0;
+                       }
+                       else
+                       {
+                           avg=255;
+                       }
+                       alteredImage.setRGB(j, i, (avg << 16) | (avg << 8) | avg); 
+
+                   }
+            }
+       return alteredImage;
+   }
+     public BufferedImage selectDarkest(BufferedImage image,int level)
+   {   
+       level = (level) * (image.getWidth() * image.getHeight())/100;
+       int darkestPixels[][] = new int[image.getWidth()*image.getHeight()][4];
+       int count=0;
+           System.out.println(level);
+       BufferedImage alteredImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+        for(int i=0;i<image.getHeight();i++)
+            {
+                for(int j=0;j<image.getWidth();j++)
+                   {
+                       int pixel=image.getRGB(j, i);
+                       
+                       int r = (pixel >> 16) & 0xFF;
+                       int g = (pixel >> 8) & 0xFF;
+                       int b = pixel & 0xFF;   
+                       int avg=(int) (0.216*r + 0.7153*g + 0.0722*b);
+                       darkestPixels[count][0]=avg;
+                       darkestPixels[count][1]=j;
+                       darkestPixels[count][2]=i;
+                       darkestPixels[count][3]=pixel;
+                       alteredImage.setRGB(j,i,255<<16 | 255<<8 | 255);
+                       count++;
+                       
+
+                   }
+            }
+        columnWiseSorting(darkestPixels,1);
+        
+    
+        for(count=0;count<level;count++)
+        {
+            int j =darkestPixels[count][1];
+            int i =darkestPixels[count][2];
+         
+            alteredImage.setRGB(j, i, darkestPixels[count][3]);
+
+        }
+       
+                       
+                      
+                   
+                
+            
+        
+         
+        
+        
+       return alteredImage;
+   }
+     
+    private void columnWiseSorting(int arr[][], int colmn) {
+    Arrays.sort(arr, new Comparator<int[]>() {
+        @Override
+        public int compare(int[] frst, int[] scnd) {
+            int comparison = Integer.compare(frst[colmn - 1], scnd[colmn - 1]);
+            if (comparison != 0) {
+                return comparison;
+            }
+            // Add tie-breaker comparisons for other columns if needed
+            return Integer.compare(frst[0], scnd[0]);
+        }
+    });
+}
+
+  
 
 
 

@@ -243,7 +243,7 @@ public class MojaRamka extends JFrame{
         myCanvas.setPreferredSize(new Dimension(750, 750));
         setContentPane(mainPanel);
         
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack(); // Pack the frame to fit components
         setLocationRelativeTo(null); // Center the frame
         

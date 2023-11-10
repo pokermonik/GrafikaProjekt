@@ -42,7 +42,10 @@ public class MenuJFrame{
         @Override
         public void actionPerformed(ActionEvent e) {
             //your actions
+            if(!zad1.isVisible())
+            {
             zad1.setVisible(true);
+            }
         }
         });
         butt2.addActionListener(new ActionListener() {
@@ -50,7 +53,10 @@ public class MenuJFrame{
         @Override
         public void actionPerformed(ActionEvent e) {
             //your actions
+            if(!zad2.isVisible())
+            {
             zad2.setVisible(true);
+            }
         }
         });
         butt3.addActionListener(new ActionListener() {
@@ -58,13 +64,18 @@ public class MenuJFrame{
         @Override
         public void actionPerformed(ActionEvent e) {
             //your actions
-            zad3.setVisible(true);
+            if(!zad3.isVisible())
+            {
+                zad3.setVisible(true);
+            }    
+            
         }
         });
         
         frame.add(panel);
-        frame.setSize(100, 200);
+        frame.setSize(200, 300);
         frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
    

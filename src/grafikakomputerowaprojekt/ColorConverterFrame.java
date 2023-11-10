@@ -39,7 +39,7 @@ import javax.swing.event.DocumentListener;
  *
  * @author poker
  */
-public class ColorConverterFrame {
+public class ColorConverterFrame extends JFrame {
     JFrame frame = new JFrame();
     private ColorConverter colorConverter;
     private JSlider redSlider;
@@ -207,7 +207,7 @@ public class ColorConverterFrame {
         frame.setSize(800, 600);
 
       
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
     public void setVisible(boolean mode)
     {
