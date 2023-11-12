@@ -18,6 +18,12 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 public class ImageModifier {
     
     private int[] histogram = new int[256];
+    private int threshold = 0;
+    
+    public int getThreshold()
+    {
+        return threshold;
+    }
     public BufferedImage convertToGrayScale(BufferedImage image,int mode)
     {
         int avg=0;
@@ -72,7 +78,7 @@ public class ImageModifier {
         return alteredImage;
     }
     
-     public BufferedImage addition(BufferedImage image,BufferedImage image2)
+    public BufferedImage addition(BufferedImage image,BufferedImage image2)
     {           
         BufferedImage alteredImage =new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_RGB);
         for(int i=0;i<image.getHeight();i++)
@@ -100,7 +106,7 @@ public class ImageModifier {
         }
         return alteredImage;
     }
-      public BufferedImage substraction(BufferedImage image,BufferedImage image2)
+    public BufferedImage substraction(BufferedImage image,BufferedImage image2)
     {           
         BufferedImage alteredImage =new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_RGB);
         for(int i=0;i<image.getHeight();i++)
@@ -231,12 +237,14 @@ public class ImageModifier {
     public BufferedImage medianFilter(BufferedImage image)
     {
         BufferedImage alteredImage =new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_RGB);
-        for (int y = 0; y < image.getHeight(); y++) {
-        for (int x = 0; x < image.getWidth(); x++) {
-            int pixel = getMedianNearbyPixel(image, x, y);
-            alteredImage.setRGB(x, y, pixel);
+        for (int y = 0; y < image.getHeight(); y++) 
+        {
+            for (int x = 0; x < image.getWidth(); x++) 
+            {
+                int pixel = getMedianNearbyPixel(image, x, y);
+                alteredImage.setRGB(x, y, pixel);
+            }
         }
-    }
         return alteredImage;
     }
     private int getMedianNearbyPixel(BufferedImage image,int x,int y)
@@ -262,75 +270,86 @@ public class ImageModifier {
         return median;
     }
     
-   public BufferedImage sobelFilter(BufferedImage image) {
-    BufferedImage alteredImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+   public BufferedImage sobelFilter(BufferedImage image) 
+   {
+       BufferedImage alteredImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
 
-    int[][] kernelX = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
-    int[][] kernelY = {{-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
+       int[][] kernelX = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
+       int[][] kernelY = {{-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
 
-    for (int y = 1; y < image.getHeight() - 1; y++) {
-        for (int x = 1; x < image.getWidth() - 1; x++) {
-            int sumX = 0;
-            int sumY = 0;
+       for (int y = 1; y < image.getHeight() - 1; y++) 
+       {
+            for (int x = 1; x < image.getWidth() - 1; x++) 
+            {
+                int sumX = 0;
+                int sumY = 0;
 
-            for (int j = -1; j <= 1; j++) {
-                for (int i = -1; i <= 1; i++) {
-                    int pixel = image.getRGB(x + i, y + j);
-                    int grayValue = (pixel >> 16) & 0xFF; 
+                for (int j = -1; j <= 1; j++) 
+                {
+                    for (int i = -1; i <= 1; i++) 
+                    {
+                        int pixel = image.getRGB(x + i, y + j);
+                        int grayValue = (pixel >> 16) & 0xFF; 
 
-                    sumX += grayValue * kernelX[j + 1][i + 1];
-                    sumY += grayValue * kernelY[j + 1][i + 1];
+                        sumX += grayValue * kernelX[j + 1][i + 1];
+                        sumY += grayValue * kernelY[j + 1][i + 1];
+                    }
                 }
+
+                int magnitude = (int) Math.sqrt(sumX * sumX + sumY * sumY);
+                int newPixel = (255 << 24) | (magnitude << 16) | (magnitude << 8) | magnitude;
+
+                alteredImage.setRGB(x, y, newPixel);
             }
-
-            int magnitude = (int) Math.sqrt(sumX * sumX + sumY * sumY);
-            int newPixel = (255 << 24) | (magnitude << 16) | (magnitude << 8) | magnitude;
-
-            alteredImage.setRGB(x, y, newPixel);
         }
-    }
 
-    return alteredImage;
-}
+        return alteredImage;
+    }
    
    
-   public BufferedImage gaussianBlur(BufferedImage image) {
-    BufferedImage alteredImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+   public BufferedImage gaussianBlur(BufferedImage image)
+   {
+       BufferedImage alteredImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
     
  
-    double[][] kernel = {
+       double[][] kernel = 
+       {
         {1.0 / 16.0, 2.0 / 16.0, 1.0 / 16.0},
         {2.0 / 16.0, 4.0 / 16.0, 2.0 / 16.0},
         {1.0 / 16.0, 2.0 / 16.0, 1.0 / 16.0}
-    };
+       };
 
-    for (int y = 1; y < image.getHeight() - 1; y++) {
-        for (int x = 1; x < image.getWidth() - 1; x++) {
-            int sumR = 0;
-            int sumG = 0;
-            int sumB = 0;
+       for (int y = 1; y < image.getHeight() - 1; y++) 
+       {
+           for (int x = 1; x < image.getWidth() - 1; x++)
+           {
+                int sumR = 0;
+                int sumG = 0;
+                int sumB = 0;
 
-            for (int j = -1; j <= 1; j++) {
-                for (int i = -1; i <= 1; i++) {
-                    int pixel = image.getRGB(x + i, y + j);
-                    sumR += ((pixel >> 16) & 0xFF) * kernel[j + 1][i + 1];
-                    sumG += ((pixel >> 8) & 0xFF) * kernel[j + 1][i + 1];
-                    sumB += (pixel & 0xFF) * kernel[j + 1][i + 1];
+                for (int j = -1; j <= 1; j++) 
+                {
+                    for (int i = -1; i <= 1; i++) 
+                        {
+                            int pixel = image.getRGB(x + i, y + j);
+                            sumR += ((pixel >> 16) & 0xFF) * kernel[j + 1][i + 1];
+                            sumG += ((pixel >> 8) & 0xFF) * kernel[j + 1][i + 1];
+                            sumB += (pixel & 0xFF) * kernel[j + 1][i + 1];
+                        }
                 }
+
+                int newR = (int) Math.min(Math.max(0, sumR), 255);
+                int newG = (int) Math.min(Math.max(0, sumG), 255);
+                int newB = (int) Math.min(Math.max(0, sumB), 255);
+
+                int newPixel = (255 << 24) | (newR << 16) | (newG << 8) | newB;
+
+                alteredImage.setRGB(x, y, newPixel);
             }
+       }
 
-            int newR = (int) Math.min(Math.max(0, sumR), 255);
-            int newG = (int) Math.min(Math.max(0, sumG), 255);
-            int newB = (int) Math.min(Math.max(0, sumB), 255);
-
-            int newPixel = (255 << 24) | (newR << 16) | (newG << 8) | newB;
-
-            alteredImage.setRGB(x, y, newPixel);
-        }
+        return alteredImage;
     }
-
-    return alteredImage;
-}
    public int[] createHistogram(BufferedImage image)
    {
        histogram = new int[256];
@@ -546,15 +565,46 @@ public class ImageModifier {
             if (comparison != 0) {
                 return comparison;
             }
-            // Add tie-breaker comparisons for other columns if needed
+
             return Integer.compare(frst[0], scnd[0]);
         }
     });
 }
+    private static double calculateMedian(int[] histogram, int start, int end) 
+    {
+        int sum = 0;
+        int count = 0;
+
+        for (int i = start; i <= end; i++) 
+        {
+            sum += i * histogram[i];
+            count += histogram[i];
+        }
+
+        return (count == 0) ? 0 : (double) sum / count;
+    }
+    public BufferedImage iterativeMeanSelection(BufferedImage image)
+    {
+        int initialThreshold=130;
+        for(int i=0;i<100;i++)
+        {
+            double meanBackground = calculateMedian(histogram, 0, initialThreshold);
+            double meanForeground = calculateMedian(histogram, initialThreshold + 1, histogram.length - 1);
+            initialThreshold = (int) ((meanBackground + meanForeground) / 2);
+        }
+        this.threshold=initialThreshold;
+        return binarization(image,initialThreshold);
+
+    }
+        
+        
+    }
+    
 
   
 
 
 
     
-}
+
+

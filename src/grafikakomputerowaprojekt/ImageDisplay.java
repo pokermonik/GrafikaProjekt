@@ -28,6 +28,8 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.FileImageOutputStream;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -67,6 +69,7 @@ public class ImageDisplay extends JFrame{
          jpegParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
         this.img = new ImageIcon(img);
         this.imagePanel = new ZoomImagePanel(img);
+        
         imagePanel.addMouseMotionListener(new MouseMotionListener() {
             int xPoint=0;
             int yPoint=0;
@@ -138,6 +141,7 @@ public class ImageDisplay extends JFrame{
         MyButton button14 = new MyButton("Histogram");
         MyButton button15 = new MyButton("Binaryzacja");
         MyButton button16 = new MyButton("Selekcja czarnego");
+        MyButton button17 = new MyButton("Selekcja iteratywna");
            button.addActionListener(new ActionListener() {
 
         @Override
@@ -340,6 +344,21 @@ public class ImageDisplay extends JFrame{
             
         }
         });
+          button17.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) 
+        {
+            
+                //your actions
+                changeImage(imageModifier.iterativeMeanSelection(imagePanel.getImage()));
+                JOptionPane.showMessageDialog(imagePanel, "Wyznaczono threshold:"+imageModifier.getThreshold());
+                
+                
+           
+            
+        }
+        });
         
         
         
@@ -369,6 +388,7 @@ public class ImageDisplay extends JFrame{
     controlPanel2.add(button14);
     controlPanel2.add(button15);
     controlPanel2.add(button16);
+    controlPanel2.add(button17);
 
     // Create a new panel for arranging the control panels vertically
     JPanel mainControlPanel = new JPanel(new BorderLayout());
@@ -381,15 +401,31 @@ public class ImageDisplay extends JFrame{
         mainControlPanel.setBorder(new LineBorder(Color.BLACK, 1));
         mainControlPanel.setBackground(Color.white);
         // Add the image panel to the frame's center
-        frame.add(imagePanel, BorderLayout.CENTER);
+        //frame.add(imagePanel, BorderLayout.CENTER);
+        JPanel imageAndHistogramPanel = new JPanel(new BorderLayout());
+    imageAndHistogramPanel.setLayout(new BoxLayout(imageAndHistogramPanel, BoxLayout.X_AXIS));
+
+    imagePanel.setPreferredSize(new Dimension(500,700));
+
+    imageAndHistogramPanel.add(imagePanel);
+
+   imageAndHistogramPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+
+    // Add the histogram to the imageAndHistogramPanel
+    imageAndHistogramPanel.add(histogram);
+    
+
+
+    // Add the imageAndHistogramPanel to the frame
+    frame.add(imageAndHistogramPanel);
 
         // Add the zoom slider to the frame's south
         frame.add(zoomSlider, BorderLayout.SOUTH);
-       histogramFrame = new JFrame("Histogram");
-       histogramFrame.add(histogram);
+       //histogramFrame = new JFrame("Histogram");
+       //histogramFrame.add(histogram);
 
-        histogramFrame.setSize(800, 600);
-        histogramFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close this frame without affecting the main frame
+        //histogramFrame.setSize(800, 600);
+        //histogramFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close this frame without affecting the main frame
 
         //histogramFrame.setVisible(true);
         //histogram.setPreferredSize(new Dimension(150, 300));
@@ -452,10 +488,7 @@ public class ImageDisplay extends JFrame{
     {
         imagePanel.setImage(image);
         histogram.setData(imageModifier.createHistogram(imagePanel.getImage()));
-        if(histogramFrame.isVisible()==false)
-        {
-            histogramFrame.setVisible(true);
-        }
+   
         
     }
 
@@ -596,7 +629,7 @@ public class ImageDisplay extends JFrame{
             }
             try{showInputDialogF = Integer.parseInt(showInputDialog);
             
-            if(showInputDialogF>=0 && showInputDialogF<=255 )
+            if(showInputDialogF>=0 && showInputDialogF<=100 )
             {
                 changeImage(imageModifier.selectDarkest(imagePanel.getImage(),showInputDialogF));
                 break;
