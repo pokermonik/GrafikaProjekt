@@ -126,6 +126,7 @@ public class MojaRamka extends JFrame{
             if(recznie==-1)
             {
                 
+                showMyDialog();
             }
         }
         });
