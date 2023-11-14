@@ -36,13 +36,12 @@ public class Rectangle extends Shape{
     @Override
     public void resize(int x, int y) 
     {
-          // Adjust the width and height based on the direction of resizing
         int newWidth = x2 - x1 + x;
         int newHeight = y2 - y1 + y;
 
         if (newWidth > 0 && newHeight > 0) 
         {
-            // Ensure both width and height are positive or zero
+           
             x2 = x1 + newWidth;
             y2 = y1 + newHeight;
             
@@ -54,13 +53,13 @@ public class Rectangle extends Shape{
 
     @Override
     public boolean position(int x, int y) {
-        int tolerance=5;
+        
         return ((x==x1 || x==x2) && (y<=y2 && y>=y1)) || ((y==y1 || y==y2) && (x>=x1 && x<=x2));
            
     }
     
     
-       @Override
+    @Override
     public int getX1() {
         return x1;
     }

@@ -39,19 +39,24 @@ public class MojaRamka extends JFrame{
     int startY;
     int endX;
     int endY;
-    int wybor=-1;
+    int wybor=-3;
     int click =0;
     int recznie=1;
+    int bezierCounter=0;
+    int bezierSelectedLevel=0;
+   
     ShapesList shapes = new ShapesList();
-    Line currentLine;
+    
     Shape selectedShape;
     DrawCanvas myCanvas;
-    
+    BezierCurve bc = new BezierCurve(0,0,0,0);
     MyButton btnZapisz = new MyButton("Zapisz");
     MyButton btnWczytaj = new MyButton("Wczytaj");
+    MyButton btnWyczysc = new MyButton("Wyczysc");
     MyButton btnLinia= new MyButton("Linia");
     MyButton btnProstokat= new MyButton("Prostokat");
     MyButton btnOkrag= new MyButton("Okrag");
+    MyButton btnKrzywa= new MyButton("Krzywa");
     MyButton btnPrzesun= new MyButton("Przesun");
     MyButton btnRozmiar= new MyButton("Zmien Rozmiar");
     
@@ -74,23 +79,79 @@ public class MojaRamka extends JFrame{
     
     public void showMyDialog()
     {
-        
-        int result = dialog4.showInputDialog(controlPanel);
-        if(result==JOptionPane.OK_OPTION)
+        while(true)
         {
-            this.click=1;
-            this.startX=dialog4.getX1();
-            this.startY=dialog4.getY1();
-            this.endX=dialog4.getX2();
-            this.endY=dialog4.getY2();
-            myCanvas.repaint();
-        } 
+            int result = dialog4.showInputDialog(controlPanel);
+            if(result==JOptionPane.OK_OPTION && dialog4.isValid1())
+            {
+                this.click=1;
+                this.startX=dialog4.getX1();
+                this.startY=dialog4.getY1();
+                this.endX=dialog4.getX2();
+                this.endY=dialog4.getY2();
+                myCanvas.repaint();
+                break;
+ 
+            }
+            else if(result ==-1 || result==JOptionPane.CANCEL_OPTION)
+            {
+                break;
+            }
+        }
+     
+    }
+    public void showMyDialogBezier()
+    {
+        int ok=0;
+        while(true)
+        {
+            int result = dialog4.showInputDialog(controlPanel);
+            if(result==JOptionPane.OK_OPTION && dialog4.isValid1())
+            {
+                this.click=1;
+                this.startX=dialog4.getX1();
+                this.startY=dialog4.getY1();
+                this.endX=dialog4.getX2();
+                this.endY=dialog4.getY2();
+                myCanvas.repaint();
+                ok=1;
+                break;
+            }
+            else if(result ==-1 || result==JOptionPane.CANCEL_OPTION)
+               {
+                   break;
+               }
+    
+        }
+        if(bezierSelectedLevel>2 && ok==1)
+        {
+             for(int i=2;i<bezierSelectedLevel;i++)
+            {
+                while(true)
+                {
+                    int result = dialog2.showInputDialog(controlPanel );
+                    if(result==JOptionPane.OK_OPTION && dialog2.isValid1())
+                    {
+                        this.endX=dialog2.getX1();
+                        this.endY=dialog2.getY1();
+                        myCanvas.repaint();
+                        break;
+                    }
+                }
+         
+            } 
+            
+        }
+       
+        
+      
     }
     public void showMyDialog2()
     {
-        
+        while(true)
+        {
         int result = dialog2.showInputDialog(controlPanel);
-        if(result==JOptionPane.OK_OPTION)
+        if(result==JOptionPane.OK_OPTION && dialog2.isValid1())
         {
             if (wybor==3)
             {
@@ -102,7 +163,13 @@ public class MojaRamka extends JFrame{
             }
             
             myCanvas.repaint();
-        } 
+            break;
+        }
+         else if(result ==-1 || result==JOptionPane.CANCEL_OPTION)
+            {
+                break;
+            }
+        }
     }
     
     public MojaRamka()
@@ -111,12 +178,27 @@ public class MojaRamka extends JFrame{
         this.myCanvas = new DrawCanvas(mouseAdapter);
 
         
-          checkBoxPixele.setForeground(Color.white); // Change the text color
+        checkBoxPixele.setForeground(Color.white); // Change the text color
         checkBoxPixele.setBackground(Color.blue); // Change the background color
        
         controlPanel.setLayout(new FlowLayout());
         controlPanel.setBorder(new LineBorder(Color.BLACK, 1));
         controlPanel.setBackground(Color.white);
+        
+        btnKrzywa.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //your actions
+            wybor=-2;
+            selectLevelBeizer();
+            if(recznie==-1)
+            {
+                
+                showMyDialogBezier();
+            }
+        }
+        });
         btnLinia.addActionListener(new ActionListener() {
 
         @Override
@@ -207,6 +289,20 @@ public class MojaRamka extends JFrame{
             }
             
         });
+        btnWyczysc.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                shapes.removeAll();
+                selectedShape=null;
+                wybor=-1;
+                bezierCounter=0;
+                myCanvas.repaint();
+
+            }
+            
+        });
         
         textDialogAlert.setHorizontalAlignment(SwingConstants.CENTER);
         dialogAlert.add(textDialogAlert);
@@ -222,8 +318,10 @@ public class MojaRamka extends JFrame{
         controlPanel.add(btnLinia);
         controlPanel.add(btnProstokat);
         controlPanel.add(btnOkrag);
+        controlPanel.add(btnKrzywa);
         controlPanel.add(btnPrzesun);
         controlPanel.add(btnRozmiar);
+        controlPanel.add(btnWyczysc);
         controlPanel.add(btnZapisz);
         controlPanel.add(btnWczytaj); 
         controlPanel.add(coordinatesLabel);
@@ -277,7 +375,7 @@ public class MojaRamka extends JFrame{
          setBackground(Color.WHITE);  // set background color for this JPanel
          
           if (loadedImage != null) {
-        g.drawImage(loadedImage, 0, 0, null);
+         g.drawImage(loadedImage, 0, 0, null);
     }
          // Your custom painting codes. For example,
          // Drawing primitive shapes
@@ -333,6 +431,47 @@ public class MojaRamka extends JFrame{
                  break;
              case 4:
                  break;
+             case -2:
+                 
+                 if(bezierCounter==0)
+                 {
+                     
+                    bc = new BezierCurve(startX,startY,endX,endY);
+                    //bc.calculateDimensions();
+                    bc.draw(g);
+                    bezierCounter++;
+                    if(click==1)
+                    {
+                        //shapes.add(bc);
+                    }
+                    
+                    
+                 }
+                 else
+                 {
+                    Point p = new Point(endX,endY);
+                    bc.addControlPoint(p);
+                    bc.draw(g);
+                    
+                    if(click!=1)
+                    {
+                        bc.removeControlPoint(p);
+                    }
+                    if(bezierSelectedLevel==bezierCounter)
+                    {
+                        bezierCounter=0;
+                        //bezierSelectedLevel=0;
+                        shapes.add(bc);
+                        
+                    }
+                    
+                    
+                    
+                 }
+                
+               
+
+             
                  
                  
          }
@@ -464,6 +603,7 @@ public class MojaRamka extends JFrame{
                 System.out.println("Released"+"X koniec: "+endX+"Y koniec: "+endY);
                 click=1;
                 myCanvas.repaint();
+                bezierCounter++;
             }
             else
             {
@@ -476,6 +616,36 @@ public class MojaRamka extends JFrame{
      };
     
     
+ public void selectLevelBeizer()
+   {
+       int showInputDialogF;
+       while(true)
+       {
 
+            String showInputDialog = JOptionPane.showInputDialog(this,"Podaj stopien krzywej Beziera \n od 2 do 10");
+            if(showInputDialog==null)
+            {
+                break;
+            }
+            try{showInputDialogF = Integer.parseInt(showInputDialog);
+            
+            if(showInputDialogF>=2 && showInputDialogF<=10 )
+            {
+                bezierSelectedLevel =showInputDialogF;
+                break;
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(this, "Zly parametr!");
+            }
+            }
+            catch(NumberFormatException e)
+            {
+                JOptionPane.showMessageDialog(this, "Zly parametr!");
+            }
+
+       }
+        
+   }
     
 }

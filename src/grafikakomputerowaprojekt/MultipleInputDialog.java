@@ -25,6 +25,7 @@ public class MultipleInputDialog extends JPanel{
     JTextField y1 = new JTextField();
     JTextField x2 = new JTextField();
     JTextField y2 = new JTextField();
+    int mode;
     Object[] message = {
         "Input value 1:", x1,
         "Input value 2:", y1,
@@ -34,6 +35,7 @@ public class MultipleInputDialog extends JPanel{
     };
     public MultipleInputDialog(int mode) 
     {
+        this.mode=mode;
         if(mode==1)
         {
         setLayout(new GridLayout(5, 2));
@@ -57,6 +59,7 @@ public class MultipleInputDialog extends JPanel{
 
   
     }
+    
        
     public int showInputDialog(Component parentComponent) 
     {   
@@ -70,26 +73,72 @@ public class MultipleInputDialog extends JPanel{
         JOptionPane.PLAIN_MESSAGE
       );
     }
+    public boolean isValid1()
+    {
+        if(this.mode==1)
+        {
+            if(getX1()>0 & getX2()>0 & getY1()>0 & getY2()>0)
+            {
+                return true;
+            }
+        }
+        else if(this.mode==2)
+        {
+             if(getX1()>0  & getY1()>0 )
+            {
+            return true;
+            }
+        }
+        return false;
     
+    }
     public void setX1(int X1)
     {
         x1.setText(Integer.toString(X1));
     }
     public int getX1()
     {
-        return(Integer.parseInt(x1.getText()));
+        try{return(Integer.parseInt(x1.getText()));
+        
+        }
+          catch(NumberFormatException e)
+            {
+                JOptionPane.showMessageDialog(this, "Zly parametr x1!");
+            }
+        return 0;
     }
     public int getY1()
     {
-        return(Integer.parseInt(y1.getText()));
+            try{return(Integer.parseInt(y1.getText()));
+        
+        }
+          catch(NumberFormatException e)
+            {
+                JOptionPane.showMessageDialog(this, "Zly parametr y1!");
+            }
+        return 0;
     }
     public int getX2()
     {
-        return(Integer.parseInt(x2.getText()));
+            try{return(Integer.parseInt(x2.getText()));
+        
+        }
+          catch(NumberFormatException e)
+            {
+                JOptionPane.showMessageDialog(this, "Zly parametr x2!");
+            }
+        return 0;
     }
     public int getY2()
     {
-        return(Integer.parseInt(y2.getText()));
+            try{return(Integer.parseInt(y2.getText()));
+        
+        }
+          catch(NumberFormatException e)
+            {
+                JOptionPane.showMessageDialog(this, "Zly parametr y2!");
+            }
+        return 0;
     }
     
 }
