@@ -47,6 +47,8 @@ public class MojaRamka extends JFrame{
    
     ShapesList shapes = new ShapesList();
     
+    int bezierRecznie=-3;
+    int bezierWybor=1;
     Shape selectedShape;
     DrawCanvas myCanvas;
     BezierCurve bc = new BezierCurve(0,0,0,0);
@@ -76,7 +78,16 @@ public class MojaRamka extends JFrame{
     
     JFileChooser chooseFile = new JFileChooser();
     
-    
+    public boolean checkBezier()
+    {
+        if(bezierCounter<bezierSelectedLevel)
+        {
+            JOptionPane.showMessageDialog(this, "Dokoncz rysowanie krzywej Beziera!");
+            return false;
+        }
+        return true;
+    }
+   
     public void showMyDialog()
     {
         while(true)
@@ -100,6 +111,7 @@ public class MojaRamka extends JFrame{
         }
      
     }
+    
     public void showMyDialogBezier()
     {
         int ok=0;
@@ -285,7 +297,8 @@ public class MojaRamka extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 myCanvas.loadCanvas();
-
+              
+                
             }
             
         });
@@ -298,6 +311,7 @@ public class MojaRamka extends JFrame{
                 selectedShape=null;
                 wybor=-1;
                 bezierCounter=0;
+                bezierSelectedLevel=0;
                 myCanvas.repaint();
 
             }
@@ -432,14 +446,17 @@ public class MojaRamka extends JFrame{
              case 4:
                  break;
              case -2:
-                 
+                
                  if(bezierCounter==0)
                  {
-                     
+                    bezierRecznie=recznie;
+                    bezierWybor=wybor;
                     bc = new BezierCurve(startX,startY,endX,endY);
                     //bc.calculateDimensions();
                     bc.draw(g);
-                    bezierCounter++;
+                    bezierCounter=1;
+                    System.out.println("AAAA"+bc.controlPoints.size());
+                    
                     if(click==1)
                     {
                         //shapes.add(bc);
@@ -447,23 +464,30 @@ public class MojaRamka extends JFrame{
                     
                     
                  }
-                 else
+                 else 
                  {
+                    
+                    System.out.println("STARE"+bc.controlPoints.size()+bc.getX1()+bc.getY1());
                     Point p = new Point(endX,endY);
+                    
                     bc.addControlPoint(p);
+                    System.out.println("NOWE"+bc.controlPoints.size()+bc.getX1()+bc.getY1());
+                    
                     bc.draw(g);
                     
                     if(click!=1)
                     {
                         bc.removeControlPoint(p);
                     }
-                    if(bezierSelectedLevel==bezierCounter)
+                    if(bezierSelectedLevel==bezierCounter )
                     {
                         bezierCounter=0;
                         //bezierSelectedLevel=0;
                         shapes.add(bc);
                         
+                        
                     }
+                 
                     
                     
                     
@@ -542,15 +566,16 @@ public class MojaRamka extends JFrame{
                 }
                 else
                 {
-                       endX=e.getX();
-            endY=e.getY();
-            if (wybor == 3 && selectedShape != null)
-            { // Check if the Przesun button is selected and a shape is selected
-            int dx = e.getX() - startX;
-            int dy = e.getY() - startY;
-            selectedShape.move(dx, dy); // Update the position of the selected shape
-            startX = e.getX();
-            startY = e.getY();
+                    endX=e.getX();
+                    endY=e.getY();
+                    if (wybor == 3 && selectedShape != null)
+                    { // Check if the Przesun button is selected and a shape is selected
+                    int dx = e.getX() - startX;
+                    int dy = e.getY() - startY;
+                    
+                    selectedShape.move(dx, dy); // Update the position of the selected shape
+                    startX = e.getX();
+                    startY = e.getY();
            
             }
             if(wybor==4 && selectedShape !=null)
@@ -572,16 +597,16 @@ public class MojaRamka extends JFrame{
   
          public void mousePressed(MouseEvent e)
          {
-         
+               
                 if(recznie==-1 && wybor<3)
                 {
                 
                 }
                 else
                 {
-                       startX=e.getX();
-                startY=e.getY();
-                click=0;
+                    startX=e.getX();
+                    startY=e.getY();
+                    click=0;
                 }
              
                 if(wybor==3 || wybor==4)
@@ -592,10 +617,22 @@ public class MojaRamka extends JFrame{
          }
          public void mouseMoved(MouseEvent e)
          {
+                if(bezierSelectedLevel>bezierCounter && bezierSelectedLevel!=0 && bezierCounter!=0 && (bezierWybor!=wybor || bezierRecznie!=recznie))
+                {
+                   
+                   shapes.add(bc);
+                   bezierCounter=0;
+                   bezierSelectedLevel=0;
+                }
                 coordinatesLabel.setText("X: "+e.getX()+" Y: "+e.getY()); 
          }
          public void mouseReleased(MouseEvent e)
-         {        
+         {   
+             if(wybor==-2)
+                {
+                    
+                    bezierCounter++;
+                }
             if(recznie==1)
             {
                 endX=e.getX();
@@ -603,7 +640,8 @@ public class MojaRamka extends JFrame{
                 System.out.println("Released"+"X koniec: "+endX+"Y koniec: "+endY);
                 click=1;
                 myCanvas.repaint();
-                bezierCounter++;
+              
+                
             }
             else
             {
@@ -612,6 +650,7 @@ public class MojaRamka extends JFrame{
                    showMyDialog2();
                }
             }
+              
          }
      };
     

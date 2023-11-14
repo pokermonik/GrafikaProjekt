@@ -18,6 +18,9 @@ public class BezierCurve extends Shape{
 
     LinkedList<Point> controlPoints;
     int x1,x2,y1,y2;
+    int foundPoint;
+    int lol=0;
+   
     int[] xDimension = new int[100];
     int[] yDimension = new int[100];
     public BezierCurve(int x1,int y1,int x2,int y2) {
@@ -28,6 +31,10 @@ public class BezierCurve extends Shape{
         this.y2=y2;
         controlPoints.add(new Point(x1,y1));
         controlPoints.add(new Point(x2,y2));
+    }
+    public BezierCurve()
+    {
+        
     }
     
     public void addControlPoint(Point p)
@@ -42,6 +49,11 @@ public class BezierCurve extends Shape{
     @Override
     public void draw(Graphics g) 
     {
+        if(lol==0)
+        {
+            lol=1;
+            controlPoints.removeLast();
+        }
         calculateDimensions();
         for(int i=0;i<controlPoints.size();i++)
         {
@@ -89,7 +101,10 @@ private static int binomialCoefficient(int n, int k) {
 }
     @Override
     public void move(int x, int y) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println(controlPoints.size());
+        controlPoints.get(foundPoint).x=controlPoints.get(foundPoint).x+x;
+        controlPoints.get(foundPoint).y=controlPoints.get(foundPoint).y+y;
+     
     }
 
     @Override
@@ -99,7 +114,17 @@ private static int binomialCoefficient(int n, int k) {
 
     @Override
     public boolean position(int x, int y) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int distanceThreshold = 5;
+        for(int i=0;i<controlPoints.size();i++)
+        {
+            
+            if(Math.abs(x-controlPoints.get(i).x)<=distanceThreshold && Math.abs(y-controlPoints.get(i).y)<=distanceThreshold)
+            {
+                foundPoint=i;
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

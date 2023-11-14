@@ -43,5 +43,10 @@ public class ShapesList implements Serializable {
     {
         shapes.add(s);
     }
+    public void replace(Shape s)
+    {
+        shapes.removeLast();
+        shapes.add(s);
+    }
     
 }
