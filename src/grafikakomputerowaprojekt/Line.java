@@ -4,6 +4,7 @@
  */
 package grafikakomputerowaprojekt;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.Line2D;
 
@@ -14,6 +15,7 @@ import java.awt.geom.Line2D;
 public class Line extends Shape{
 
     int x1,x2,y1,y2;
+    Color color;
     
     public Line(int x1,int y1,int x2,int y2)
     {
@@ -72,5 +74,16 @@ public class Line extends Shape{
     public int getY2() {
         return y2;
     }
+
+    @Override
+    public Color getColor() {
+        return color;
+    }
+
+    @Override
+    public void setColor(Color color) {
+        this.color=color;
+    }
+    
     
 }

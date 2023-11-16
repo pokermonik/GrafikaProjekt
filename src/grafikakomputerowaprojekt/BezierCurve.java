@@ -16,6 +16,7 @@ import static org.apache.commons.math3.util.ArithmeticUtils.binomialCoefficient;
  */
 public class BezierCurve extends Shape{
 
+    Color color;
     LinkedList<Point> controlPoints;
     int x1,x2,y1,y2;
     int foundPoint;
@@ -39,7 +40,10 @@ public class BezierCurve extends Shape{
     
     public void addControlPoint(Point p)
     {
+        Point temp = controlPoints.getLast();
+        controlPoints.removeLast();
         controlPoints.add(p);
+        controlPoints.add(temp);
     }
     public void removeControlPoint(Point p)
     {
@@ -49,6 +53,7 @@ public class BezierCurve extends Shape{
     @Override
     public void draw(Graphics g) 
     {
+       
         if(lol==0)
         {
             lol=1;
@@ -62,7 +67,7 @@ public class BezierCurve extends Shape{
             g.drawOval(controlPoints.get(i).x,controlPoints.get(i).y , 4,4);
             g.fillOval(controlPoints.get(i).x,controlPoints.get(i).y , 4,4);
         }
-        g.setColor(Color.black);
+        g.setColor(color);
         g.drawPolyline(xDimension, yDimension,yDimension.length );
      
     }
@@ -145,6 +150,15 @@ private static int binomialCoefficient(int n, int k) {
     @Override
     public int getY2() {
         return y2;
+    }
+     @Override
+    public Color getColor() {
+        return color;
+    }
+
+    @Override
+    public void setColor(Color color) {
+        this.color=color;
     }
 
     

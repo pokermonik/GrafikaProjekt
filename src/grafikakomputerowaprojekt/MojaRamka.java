@@ -61,8 +61,10 @@ public class MojaRamka extends JFrame{
     MyButton btnKrzywa= new MyButton("Krzywa");
     MyButton btnPrzesun= new MyButton("Przesun");
     MyButton btnRozmiar= new MyButton("Zmien Rozmiar");
+    MyButton btnWybierzKolor= new MyButton("Wybierz Kolor");
     
-  
+    Color newColor = new Color(0);
+    
     
     JLabel coordinatesLabel= new JLabel("X: 0 Y: 0");
     JLabel textDialogAlert = new JLabel("Udało się zapisać obraz");
@@ -197,6 +199,16 @@ public class MojaRamka extends JFrame{
         controlPanel.setBorder(new LineBorder(Color.BLACK, 1));
         controlPanel.setBackground(Color.white);
         
+        
+        btnWybierzKolor.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //your actions
+            newColor = JColorChooser.showDialog(null, "Wybierz kolor pędzla", Color.RED);
+        }
+        });
+
         btnKrzywa.addActionListener(new ActionListener() {
 
         @Override
@@ -336,6 +348,7 @@ public class MojaRamka extends JFrame{
         controlPanel.add(btnPrzesun);
         controlPanel.add(btnRozmiar);
         controlPanel.add(btnWyczysc);
+        controlPanel.add(btnWybierzKolor);
         controlPanel.add(btnZapisz);
         controlPanel.add(btnWczytaj); 
         controlPanel.add(coordinatesLabel);
@@ -394,7 +407,7 @@ public class MojaRamka extends JFrame{
          // Your custom painting codes. For example,
          // Drawing primitive shapes
         
-         g.setColor(Color.BLACK);    // set the drawing color
+             // set the drawing color
          
        
                 for (int i=0;i<shapes.getLength();i++)
@@ -403,11 +416,13 @@ public class MojaRamka extends JFrame{
                        {
                            g.setColor(Color.red);
                        }*/
+                       g.setColor(shapes.get(i).getColor());
                        shapes.get(i).draw(g);
                        //g.setColor(Color.BLACK);
                        
                        
-                   }
+                   }    
+                g.setColor(newColor);
          //g.setColor(Color.red);
          
          switch(wybor)
@@ -418,6 +433,7 @@ public class MojaRamka extends JFrame{
                 currentline.draw(g);
                 if(click==1)
                 {
+                    currentline.setColor(newColor);
                     shapes.add(currentline);
                 }
                 
@@ -427,6 +443,7 @@ public class MojaRamka extends JFrame{
                  r.draw(g);
                  if(click==1)
                  {
+                     r.setColor(newColor);
                      shapes.add(r);
                  }
                  
@@ -436,6 +453,7 @@ public class MojaRamka extends JFrame{
                  c.draw(g);
                  if(click==1)
                  {
+                     c.setColor(newColor);
                      shapes.add(c);
                  }
                  
@@ -452,6 +470,7 @@ public class MojaRamka extends JFrame{
                     bezierRecznie=recznie;
                     bezierWybor=wybor;
                     bc = new BezierCurve(startX,startY,endX,endY);
+                    bc.setColor(newColor);
                     //bc.calculateDimensions();
                     bc.draw(g);
                     bezierCounter=1;
@@ -481,6 +500,7 @@ public class MojaRamka extends JFrame{
                     }
                     if(bezierSelectedLevel==bezierCounter )
                     {
+                        
                         bezierCounter=0;
                         //bezierSelectedLevel=0;
                         shapes.add(bc);
@@ -619,7 +639,7 @@ public class MojaRamka extends JFrame{
          {
                 if(bezierSelectedLevel>bezierCounter && bezierSelectedLevel!=0 && bezierCounter!=0 && (bezierWybor!=wybor || bezierRecznie!=recznie))
                 {
-                   
+                   bc.setColor(newColor);
                    shapes.add(bc);
                    bezierCounter=0;
                    bezierSelectedLevel=0;

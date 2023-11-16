@@ -4,6 +4,7 @@
  */
 package grafikakomputerowaprojekt;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.io.Serializable;
 
@@ -21,5 +22,7 @@ public abstract class Shape implements Serializable {
     public abstract int getY1();
     public abstract int getX2();
     public abstract int getY2();
+    public abstract Color getColor();
+    public abstract void setColor(Color color);
     
 }
