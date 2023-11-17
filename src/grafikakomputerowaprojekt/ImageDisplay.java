@@ -59,6 +59,8 @@ public class ImageDisplay extends JFrame{
     JSlider zoomSlider; 
     JFrame histogramFrame ;
     
+    BufferedImage defaultImage;
+    
     HistogramChart histogram =new HistogramChart();
     JLabel label = new JLabel("R:0 G:0 B:0");
     public ImageDisplay()
@@ -142,6 +144,19 @@ public class ImageDisplay extends JFrame{
         MyButton button15 = new MyButton("Binaryzacja");
         MyButton button16 = new MyButton("Selekcja czarnego");
         MyButton button17 = new MyButton("Selekcja iteratywna");
+        MyButton button18 = new MyButton("Zresetuj");
+        
+        
+        
+             button18.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            changeImage(defaultImage);
+        }
+        });
+        
+        
            button.addActionListener(new ActionListener() {
 
         @Override
@@ -372,6 +387,7 @@ public class ImageDisplay extends JFrame{
     controlPanel1.add(label);
     controlPanel1.add(button);
     controlPanel1.add(button2);
+    controlPanel1.add(button18);
     controlPanel1.add(button3);
     controlPanel1.add(button4);
     controlPanel1.add(button5);
@@ -459,6 +475,7 @@ public class ImageDisplay extends JFrame{
                 if(selectedFile.getName().contains("jpg"))
                 {
                     JPGreader jpg= new JPGreader(selectedFile);
+                    defaultImage = jpg.getImage();
                     switch (mode) {
                         case 1 -> changeImage(imageModifier.addition(imagePanel.getImage(), jpg.getImage() ));
                         case 2 -> changeImage(imageModifier.substraction(imagePanel.getImage(), jpg.getImage() ));
@@ -471,7 +488,9 @@ public class ImageDisplay extends JFrame{
                 else if(selectedFile.getName().contains("ppm"))
                 {
                     PPMreader ppm= new PPMreader(selectedFile);
+                    
                     changeImage(ppm.readP3(selectedFile.getName()));
+                    defaultImage =ppm.getImage();
                 }
                 else
                 {
