@@ -365,6 +365,7 @@ public class ImageModifier {
                 
                 //avg = Math.min(255, Math.max(0, avg));
                 histogram[avg]++;
+                
 
             }
        }
@@ -550,7 +551,7 @@ public class ImageModifier {
                    
                 
             
-        
+        alteredImage=binarization(alteredImage,255);
          
         
         
